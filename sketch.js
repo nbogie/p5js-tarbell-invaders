@@ -70,26 +70,39 @@ var p = function(sketch) {
   }
 
   sketch.mousePressed = function() {
-    recreatePalette();
-    recreateAliens();
     setSelectedFromClick();
     sketch.draw();
   };
-  function screenToGridPosition(screenPos) {
-    return sketch.createVector(
-      sketch.floor(screenPos.x / gOpts.sqDim),
-      sketch.floor(screenPos.y / gOpts.sqDim)
-    );
-  }
+  sketch.keyPressed = function() {
+    if (sketch.key === "r") {
+      recreatePalette();
+      recreateAliens();
+      sketch.draw();
+    }
+  };
 
-  function mouseAsGridPosition() {
-    return screenToGridPosition(
-      sketch.createVector(sketch.mouseX, sketch.mouseY)
-    );
-  }
+  const Grid = {
+    screenPosAsGridPos: function(screenPos) {
+      return sketch.createVector(
+        sketch.floor(screenPos.x / gOpts.sqDim),
+        sketch.floor(screenPos.y / gOpts.sqDim)
+      );
+    },
+    mousePosAsGridPos: function() {
+      return Grid.screenPosAsGridPos(
+        sketch.createVector(sketch.mouseX, sketch.mouseY)
+      );
+    },
+    gridPosAsScreenPos: function(gridPos) {
+      return sketch.createVector(
+        gridPos.x * gOpts.sqDim,
+        gridPos.y * gOpts.sqDim
+      );
+    }
+  };
 
   function setSelectedFromClick() {
-    selected = mouseAsGridPosition();
+    selected = Grid.mousePosAsGridPos();
   }
 
   function drawAlien(alien) {
@@ -134,17 +147,13 @@ var p = function(sketch) {
       }
     }
     sketch.pop();
-    sketch.noFill();
-    sketch.stroke("white");
-    sketch.strokeWeight(2);
-    sketch.rectMode(sketch.CORNER);
     if (selected) {
-      sketch.rect(
-        selected.x * gOpts.sqDim,
-        selected.y * gOpts.sqDim,
-        gOpts.sqDim,
-        gOpts.sqDim
-      );
+      sketch.noFill();
+      sketch.stroke("white");
+      sketch.strokeWeight(2);
+      sketch.rectMode(sketch.CORNER);
+      let selScreenPos = Grid.gridPosAsScreenPos(selected);
+      sketch.rect(selScreenPos.x, selScreenPos.y, gOpts.sqDim, gOpts.sqDim);
     }
   };
 };
