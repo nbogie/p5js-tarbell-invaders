@@ -16,6 +16,7 @@ var p = function(sketch) {
     10614: "baby",
     25149: "king",
     19391: "explosion",
+    15650: "tee-pee",
     11184: "skulltop",
     32313: "treasure",
     5489: "invader",
@@ -43,9 +44,13 @@ var p = function(sketch) {
     17661: "shield",
     26318: "T",
     30661: "paw",
+    31486: "tombstone",
     4822: "silhouette",
     24005: "cauldron",
-    13689: "batman"
+    13689: "batman",
+    26352: "coin",
+    32743: "ironman",
+    14647: "badger"
   };
   let aliens;
   const gOpts = {};
@@ -93,7 +98,10 @@ var p = function(sketch) {
       gOpts.pixelsInInvader * Math.ceil(gOpts.pixelsInInvader / 2);
 
     for (let i = 0; i < gOpts.numRows * gOpts.numCols; i++) {
-      const id = sketch.floor(sketch.random(1, Math.pow(2, numBits))); // want 1-32767
+      const id =
+        sketch.random() > 0.1
+          ? sketch.floor(sketch.random(1, Math.pow(2, numBits))) // want 1-32767
+          : sketch.random(Object.keys(seeded));
       aliens.push(createAlien(id));
     }
   }
@@ -215,7 +223,11 @@ var p = function(sketch) {
       sketch.fill("white");
       const selectedAlien = aliens[selected.y * gOpts.numCols + selected.x];
       if (selectedAlien) {
-        const desc = ` id ${selectedAlien.id} at ${selected.x}, ${selected.y}`;
+        let title = seeded[selectedAlien.id];
+
+        const desc = ` id ${selectedAlien.id} (${title ? title : "?"}) at ${
+          selected.x
+        }, ${selected.y}`;
         sketch.text(
           desc,
           selScreenPos.x + gOpts.sqDim + 3,
