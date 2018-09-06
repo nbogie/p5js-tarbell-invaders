@@ -5,7 +5,48 @@
 
 var p = function(sketch) {
   //note: noLoop()
-  let seeded = [[28180, "candle"]];
+  let seeded = {
+    28180: "candle",
+    21886: "invader",
+    32743: "detonator",
+    16682: "fountain",
+    17530: "heart",
+    19937: "crowface",
+    10653: "birdman",
+    10614: "baby",
+    25149: "king",
+    19391: "explosion",
+    11184: "skulltop",
+    32313: "treasure",
+    5489: "invader",
+    11734: "baby",
+    19332: "man",
+    24081: "angry",
+    27246: "helipad",
+    29262: "tombstone",
+    25430: "ring",
+    9935: "helm",
+    26927: "T",
+    16662: "question",
+    17887: "hive",
+    25582: "face",
+    23702: "missile",
+    32525: "jacket",
+    24500: "rocket",
+    27879: "punisher",
+    21887: "invader",
+    32765: "castle",
+    12743: "glyph",
+    32724: "house",
+    16437: "golem",
+    27645: "firesprite",
+    17661: "shield",
+    26318: "T",
+    30661: "paw",
+    4822: "silhouette",
+    24005: "cauldron",
+    13689: "batman"
+  };
   let aliens;
   const gOpts = {};
   let selected;
@@ -173,12 +214,14 @@ var p = function(sketch) {
       sketch.strokeWeight(6);
       sketch.fill("white");
       const selectedAlien = aliens[selected.y * gOpts.numCols + selected.x];
-      const desc = ` id ${selectedAlien.id} at ${selected.x}, ${selected.y}`;
-      sketch.text(
-        desc,
-        selScreenPos.x + gOpts.sqDim + 3,
-        selScreenPos.y + gOpts.sqDim / 2
-      );
+      if (selectedAlien) {
+        const desc = ` id ${selectedAlien.id} at ${selected.x}, ${selected.y}`;
+        sketch.text(
+          desc,
+          selScreenPos.x + gOpts.sqDim + 3,
+          selScreenPos.y + gOpts.sqDim / 2
+        );
+      }
     }
   };
 };
