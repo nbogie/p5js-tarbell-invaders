@@ -5,7 +5,7 @@
 
 var p = function(sketch) {
   //note: noLoop()
-
+  let seeded = [[28180, "candle"]];
   let aliens;
   const gOpts = {};
   let selected;
@@ -48,22 +48,36 @@ var p = function(sketch) {
 
     gOpts.numRows = Math.floor(sketch.windowHeight / gOpts.sqDim);
     gOpts.numCols = Math.floor(sketch.windowWidth / gOpts.sqDim);
+    const numBits =
+      gOpts.pixelsInInvader * Math.ceil(gOpts.pixelsInInvader / 2);
 
     for (let i = 0; i < gOpts.numRows * gOpts.numCols; i++) {
-      aliens.push(createAlien());
+      const id = sketch.floor(sketch.random(1, Math.pow(2, numBits))); // want 1-32767
+      aliens.push(createAlien(id));
     }
   }
+  function bitFromIdAt(id, x, y) {
+    const h = gOpts.pixelsInInvader;
+    const w = Math.ceil(h / 2);
+    const bitNumber = y * w + x;
+    let mask = 1 << bitNumber;
+    let masked = mask & id;
+    //console.log(`id ${id} bitNumber: ${bitNumber} mask ${mask} masked ${masked}`);
+    return masked !== 0 ? 1 : 0;
+  }
 
-  function createAlien() {
-    const bits = [];
+  function createAlien(id) {
+    // alternatively just store the id as a single 15-bit number, and create at draw-time
+    const bits = []; //can we make this a 2d array of bits?
     for (let col = 0; col < Math.ceil(gOpts.pixelsInInvader / 2); col++) {
       bits[col] = [];
       for (let row = 0; row < gOpts.pixelsInInvader; row++) {
-        bits[col][row] = sketch.random([0, 1]);
+        bits[col][row] = bitFromIdAt(id, col, row);
       }
     }
     return {
       bits: bits,
+      id: id,
       c1: sketch.random(gOpts.palette),
       c0: gOpts.clearColor
     };
@@ -158,7 +172,8 @@ var p = function(sketch) {
       sketch.stroke("black");
       sketch.strokeWeight(6);
       sketch.fill("white");
-      const desc = "at " + selected.x + ", " + selected.y;
+      const selectedAlien = aliens[selected.y * gOpts.numCols + selected.x];
+      const desc = ` id ${selectedAlien.id} at ${selected.x}, ${selected.y}`;
       sketch.text(
         desc,
         selScreenPos.x + gOpts.sqDim + 3,
