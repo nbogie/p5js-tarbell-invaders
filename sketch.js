@@ -154,6 +154,16 @@ var p = function(sketch) {
       sketch.rectMode(sketch.CORNER);
       let selScreenPos = Grid.gridPosAsScreenPos(selected);
       sketch.rect(selScreenPos.x, selScreenPos.y, gOpts.sqDim, gOpts.sqDim);
+      sketch.textSize(22);
+      sketch.stroke("black");
+      sketch.strokeWeight(6);
+      sketch.fill("white");
+      const desc = "at " + selected.x + ", " + selected.y;
+      sketch.text(
+        desc,
+        selScreenPos.x + gOpts.sqDim + 3,
+        selScreenPos.y + gOpts.sqDim / 2
+      );
     }
   };
 };
