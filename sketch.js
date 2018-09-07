@@ -76,12 +76,38 @@ var p = function(sketch) {
       return [cMain, cLeft, cRight, cOpp];
     }
   };
-
+  let input;
+  let buttonAddName;
+  let buttonRegen;
+  function nameSelected(txt) {
+    let selectedAlien = findSelectedAlien();
+    if (selectedAlien) {
+      seeded[selectedAlien.id] = txt;
+    }
+  }
+  function handleTextChanged() {
+    let txt = input.value();
+    if (txt.length > 1) {
+      nameSelected(txt);
+    }
+    input.value("");
+  }
   sketch.setup = function() {
     sketch.createCanvas(sketch.windowWidth, sketch.windowHeight);
     recreatePalette();
     recreateAliens();
     sketch.noLoop();
+
+    input = sketch.createInput();
+    buttonAddName = sketch.createButton("addName");
+    buttonRegen = sketch.createButton("regenerate");
+    //input.input(() => console.log("input"));
+    input.changed(handleTextChanged);
+    buttonRegen.mousePressed(() => {
+      recreatePalette();
+      recreateAliens();
+      sketch.draw();
+    });
   };
 
   function recreateAliens() {
@@ -137,7 +163,7 @@ var p = function(sketch) {
     sketch.draw();
   };
   sketch.keyPressed = function() {
-    if (sketch.key === "r") {
+    if (false && sketch.key === "r") {
       recreatePalette();
       recreateAliens();
       sketch.draw();
@@ -165,7 +191,13 @@ var p = function(sketch) {
   };
 
   function setSelectedFromClick() {
+    let prev = selected;
     selected = Grid.mousePosAsGridPos();
+    let selAlien = findSelectedAlien();
+    if (selAlien) {
+    } else {
+      selected = prev;
+    }
   }
 
   function drawAlien(alien) {
@@ -194,6 +226,10 @@ var p = function(sketch) {
       }
     }
   }
+  function findSelectedAlien() {
+    return aliens[selected.y * gOpts.numCols + selected.x];
+  }
+
   sketch.draw = function() {
     sketch.background(gOpts.clearColor);
     sketch.push();
@@ -221,7 +257,7 @@ var p = function(sketch) {
       sketch.stroke("black");
       sketch.strokeWeight(6);
       sketch.fill("white");
-      const selectedAlien = aliens[selected.y * gOpts.numCols + selected.x];
+      const selectedAlien = findSelectedAlien();
       if (selectedAlien) {
         let title = seeded[selectedAlien.id];
 
